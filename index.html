@@ -7,14 +7,14 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: var(--tg-theme-bg-color, #0f172a);
+      --bg: var(--tg-theme-bg-color, #0b1120);
       --card-bg: var(--tg-theme-secondary-bg-color, #1e293b);
       --text: var(--tg-theme-text-color, #f8fafc);
       --hint: var(--tg-theme-hint-color, #94a3b8);
-      --btn-bg: var(--tg-theme-button-color, #38bdf8);
-      --btn-text: var(--tg-theme-button-text-color, #0f172a);
-      --danger: #ef4444;
+      --accent: var(--tg-theme-button-color, #38bdf8);
+      --accent-text: var(--tg-theme-button-text-color, #0f172a);
       --border: #334155;
+      --danger: #f87171;
     }
 
     * {
@@ -32,141 +32,129 @@
       padding-bottom: 90px;
     }
 
-    .header {
+    /* Top User Bar */
+    .user-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
     }
-
-    .title {
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
+    .user-info {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-
-    .user-pill {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--border);
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
       color: var(--hint);
     }
+    .user-meta .name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .user-meta .tier {
+      font-size: 11px;
+      color: #38bdf8;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
 
+    /* Views / Tabs */
+    .view {
+      display: none;
+    }
+    .view.active {
+      display: block;
+    }
+
+    /* Forms & Cards */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .form-group {
+      padding: 14px;
       margin-bottom: 14px;
     }
-
+    .form-group {
+      margin-bottom: 12px;
+    }
     .form-group:last-child {
       margin-bottom: 0;
     }
-
     label {
       display: block;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--hint);
       margin-bottom: 6px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
-
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       background: rgba(0, 0, 0, 0.25);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 12px;
+      padding: 11px;
       color: var(--text);
       font-size: 14px;
       outline: none;
-      transition: border 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent);
+    }
+    select {
+      appearance: none;
     }
 
-    input:focus, textarea:focus {
-      border-color: var(--btn-bg);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    .toggles {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .toggle-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 12px;
+    .file-upload-box {
+      border: 2px dashed var(--border);
+      padding: 14px;
       border-radius: 10px;
       text-align: center;
       cursor: pointer;
-      user-select: none;
-      transition: all 0.2s;
-    }
-
-    .toggle-card.active {
-      border-color: var(--btn-bg);
-      background: rgba(56, 189, 248, 0.1);
-    }
-
-    .toggle-title {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--hint);
-      margin-bottom: 4px;
+      background: rgba(0,0,0,0.15);
+    }
+    .file-upload-box.selected {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    .toggle-val {
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    /* Live Preview Section */
-    .preview-section {
+    /* Telegram Live Preview */
+    .preview-box {
       background: #17212b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 12px;
-      border: 1px dashed var(--border);
-      margin-bottom: 20px;
+      margin-top: 14px;
     }
-
-    .preview-badge {
+    .preview-header {
       font-size: 11px;
       color: var(--hint);
       margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 1px;
     }
-
-    .preview-body {
+    .preview-text {
       font-size: 14px;
       line-height: 1.4;
       white-space: pre-wrap;
       word-break: break-word;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
-
     .preview-btn {
       display: block;
-      width: 100%;
-      background: rgba(43, 82, 120, 0.7);
+      background: rgba(43, 82, 120, 0.75);
       color: #6ab2f2;
       text-align: center;
       padding: 10px;
@@ -174,34 +162,68 @@
       font-size: 14px;
       font-weight: 600;
       text-decoration: none;
-      border: 1px solid rgba(106, 178, 242, 0.2);
     }
 
-    .footer-bar {
+    /* Channels View */
+    .chan-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .chan-del {
+      color: var(--danger);
+      background: none;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    /* Bottom Navigation Bar */
+    .nav-bar {
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--card-bg);
-      padding: 12px 16px;
+      background: #0f172a;
       border-top: 1px solid var(--border);
       display: flex;
-      gap: 10px;
+      z-index: 99;
+    }
+    .nav-item {
+      flex: 1;
+      padding: 14px 0;
+      text-align: center;
+      color: var(--hint);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+    .nav-item.active {
+      color: var(--accent);
+      border-top: 2px solid var(--accent);
+      background: rgba(56, 189, 248, 0.05);
     }
 
-    .btn-main {
-      flex: 1;
-      background: var(--btn-bg);
-      color: var(--btn-text);
+    .btn-action {
+      width: 100%;
+      background: var(--accent);
+      color: var(--accent-text);
       border: none;
       border-radius: 10px;
       padding: 14px;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: bold;
       cursor: pointer;
+      margin-top: 10px;
     }
-
-    .btn-main:disabled {
+    .btn-action:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
@@ -209,192 +231,293 @@
 </head>
 <body>
 
-  <div class="header">
-    <div class="title">⚡ Valoxi Studio</div>
-    <div class="user-pill" id="user-display">Loading...</div>
-  </div>
-
-  <!-- Form Section -->
-  <div class="card">
-    <div class="form-group">
-      <label>Target Channel</label>
-      <input type="text" id="target-chat" placeholder="@YourChannel or @Group" />
-    </div>
-
-    <div class="form-group">
-      <label>Post Content / Caption</label>
-      <textarea id="post-content" placeholder="Type announcement or text here..."></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Photo URL (Optional)</label>
-      <input type="url" id="photo-url" placeholder="https://cdn.site.com/image.webp" />
+  <!-- Top User Profile Info -->
+  <div class="user-header">
+    <div class="user-info">
+      <div id="user-avatar" class="avatar">U</div>
+      <div class="user-meta">
+        <div class="name" id="user-name">Loading User...</div>
+        <div class="tier">Free Tier (2 Channels Max)</div>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="form-group">
-      <label>Button Label (Custom Name)</label>
-      <input type="text" id="btn-text" placeholder="e.g. Claim Airdrop 🚀" maxlength="32" />
+  <!-- VIEW 1: POST STUDIO -->
+  <div id="view-studio" class="view active">
+    <div class="card">
+      <div class="form-group">
+        <label>Select Target Channel</label>
+        <select id="channel-selector">
+          <option value="">-- Choose Channel or Type Below --</option>
+        </select>
+        <input type="text" id="target-chat-manual" placeholder="Or enter @ChannelUsername" style="margin-top: 8px;" />
+      </div>
+
+      <div class="form-group">
+        <label>Post Text / Caption</label>
+        <textarea id="post-text" placeholder="Type message or caption..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Attach Photo / PDF (No URL Required)</label>
+        <div class="file-upload-box" id="file-drop-zone" onclick="document.getElementById('post-file').click()">
+          📁 Tap to attach Image or PDF from device
+        </div>
+        <input type="file" id="post-file" accept="image/*,application/pdf" style="display: none;" onchange="handleFileSelect(event)" />
+      </div>
     </div>
 
-    <div class="form-group">
-      <label>Destination Link (URL)</label>
-      <input type="url" id="btn-url" placeholder="https://t.me/yourlink" />
+    <div class="card">
+      <div class="form-group">
+        <label>Custom Button Name</label>
+        <input type="text" id="btn-label" placeholder="e.g. Join Airdrop 🚀" maxlength="30" />
+      </div>
+
+      <div class="form-group">
+        <label>Button Destination URL</label>
+        <input type="url" id="btn-url" placeholder="https://t.me/yourlink" />
+      </div>
+    </div>
+
+    <!-- Live Preview -->
+    <div class="preview-header">Live Post Preview</div>
+    <div class="preview-box">
+      <div class="preview-text" id="preview-text">Your post text will appear here...</div>
+      <a href="#" class="preview-btn" id="preview-btn">Button Name</a>
+    </div>
+
+    <button class="btn-action" id="publish-btn" onclick="publishPost()">🚀 Dispatch to Channel</button>
+  </div>
+
+  <!-- VIEW 2: CHANNELS MANAGER -->
+  <div id="view-channels" class="view">
+    <div class="card">
+      <label>Add Channel (Free Limit: 2 Max)</label>
+      <input type="text" id="new-channel-input" placeholder="@YourChannel" />
+      <button class="btn-action" style="margin-top: 10px;" onclick="addChannel()">➕ Save Channel</button>
+    </div>
+
+    <div class="preview-header">Your Linked Channels (<span id="chan-count">0</span>/2)</div>
+    <div id="channels-list">
+      <!-- Dynamic list from backend -->
     </div>
   </div>
 
-  <!-- Quick Options -->
-  <div class="toggles">
-    <div class="toggle-card" id="pin-card" onclick="togglePin()">
-      <div class="toggle-title">Auto-Pin Post</div>
-      <div class="toggle-val" id="pin-status">OFF ❌</div>
-    </div>
-    <div class="toggle-card" id="del-card" onclick="toggleDelete()">
-      <div class="toggle-title">Auto-Delete Ad</div>
-      <div class="toggle-val" id="del-status">Never ⏱️</div>
-    </div>
-  </div>
-
-  <!-- Live Client-side Telegram Preview -->
-  <div class="preview-badge">Live Telegram Preview</div>
-  <div class="preview-section">
-    <div class="preview-body" id="preview-text">Your post text will appear here...</div>
-    <a href="#" class="preview-btn" id="preview-button">Button Name</a>
-  </div>
-
-  <!-- Fixed Action Footer -->
-  <div class="footer-bar">
-    <button class="btn-main" id="dispatch-btn" onclick="publishPost()">🚀 Post to Channel</button>
+  <!-- Fixed Bottom Navigation -->
+  <div class="nav-bar">
+    <div class="nav-item active" id="tab-studio" onclick="switchTab('studio')">⚡ Studio</div>
+    <div class="nav-item" id="tab-channels" onclick="switchTab('channels')">📢 Channels (<span id="tab-chan-count">0</span>/2)</div>
   </div>
 
   <script>
-    const BACKEND_URL = "https://tight-violet-00f8.solofate-core.workers.dev";
+    const BACKEND = "https://tight-violet-00f8.solofate-core.workers.dev";
     const tg = window.Telegram?.WebApp;
+    let selectedFile = null;
 
-    let autoPin = false;
-    const deleteOptions = [0, 1, 6, 24];
-    let deleteIdx = 0;
-
-    // 1. Initialize Telegram WebApp
+    // Init WebApp
     if (tg) {
       tg.ready();
       tg.expand();
-      
-      const user = tg.initDataUnsafe?.user;
-      if (user) {
-        document.getElementById('user-display').innerText = `@${user.username || user.first_name}`;
-        // Auth & Save User silently on login
-        syncUser(tg.initData);
-      } else {
-        document.getElementById('user-display').innerText = "Web Preview";
+
+      const u = tg.initDataUnsafe?.user;
+      if (u) {
+        document.getElementById('user-name').innerText = `${u.first_name || ''} ${u.last_name || ''}`.trim() || `@${u.username}`;
+        if (u.photo_url) {
+          document.getElementById('user-avatar').innerHTML = `<img src="${u.photo_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+        } else {
+          document.getElementById('user-avatar').innerText = (u.first_name || 'U')[0].toUpperCase();
+        }
       }
     }
 
-    // 2. Realtime Preview Listener
-    const postContent = document.getElementById('post-content');
-    const btnText = document.getElementById('btn-text');
-    const previewText = document.getElementById('preview-text');
-    const previewBtn = document.getElementById('preview-button');
+    // Tab Switcher
+    function switchTab(tab) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-    postContent.addEventListener('input', () => {
-      previewText.innerText = postContent.value.trim() || 'Your post text will appear here...';
-    });
-
-    btnText.addEventListener('input', () => {
-      previewBtn.innerText = btnText.value.trim() || 'Button Name';
-    });
-
-    // 3. Toggles
-    function togglePin() {
-      autoPin = !autoPin;
-      document.getElementById('pin-status').innerText = autoPin ? 'ON ✅' : 'OFF ❌';
-      document.getElementById('pin-card').classList.toggle('active', autoPin);
-      tg?.HapticFeedback?.selectionChanged();
+      if (tab === 'studio') {
+        document.getElementById('view-studio').classList.add('active');
+        document.getElementById('tab-studio').classList.add('active');
+      } else {
+        document.getElementById('view-channels').classList.add('active');
+        document.getElementById('tab-channels').classList.add('active');
+        loadChannels();
+      }
     }
 
-    function toggleDelete() {
-      deleteIdx = (deleteIdx + 1) % deleteOptions.length;
-      const hrs = deleteOptions[deleteIdx];
-      document.getElementById('del-status').innerText = hrs === 0 ? 'Never ⏱️' : `${hrs} Hours ⏱️`;
-      document.getElementById('del-card').classList.toggle('active', hrs > 0);
-      tg?.HapticFeedback?.selectionChanged();
+    // Realtime Preview
+    const pText = document.getElementById('post-text');
+    const bLabel = document.getElementById('btn-label');
+    pText.addEventListener('input', () => {
+      document.getElementById('preview-text').innerText = pText.value.trim() || 'Your post text will appear here...';
+    });
+    bLabel.addEventListener('input', () => {
+      document.getElementById('preview-btn').innerText = bLabel.value.trim() || 'Button Name';
+    });
+
+    // File Selector Handler
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      const zone = document.getElementById('file-drop-zone');
+      if (file) {
+        selectedFile = file;
+        zone.classList.add('selected');
+        zone.innerText = `✅ Attached: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      } else {
+        selectedFile = null;
+        zone.classList.remove('selected');
+        zone.innerText = '📁 Tap to attach Image or PDF from device';
+      }
     }
 
-    // 4. Background Silent User Sync
-    async function syncUser(initData) {
-      if (!initData) return;
+    // Load User Channels
+    async function loadChannels() {
       try {
-        await fetch(`${BACKEND_URL}/api/auth`, {
+        const res = await fetch(`${BACKEND}/api/channels`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ initData })
+          body: JSON.stringify({ initData: tg?.initData || '' })
         });
+        const data = await res.json();
+        if (data.ok) {
+          renderChannels(data.channels || []);
+        }
       } catch (_) {}
     }
 
-    // 5. Publish Post
-    async function publishPost() {
-      const target = document.getElementById('target-chat').value.trim();
-      const text = postContent.value.trim();
-      const photo = document.getElementById('photo-url').value.trim();
-      const buttonLabel = btnText.value.trim();
-      const buttonUrl = document.getElementById('btn-url').value.trim();
+    function renderChannels(list) {
+      const selector = document.getElementById('channel-selector');
+      const listContainer = document.getElementById('channels-list');
+      document.getElementById('chan-count').innerText = list.length;
+      document.getElementById('tab-chan-count').innerText = list.length;
 
-      if (!target || !target.startsWith('@')) {
-        alert("Please enter a valid channel username starting with @ (e.g. @MyChannel)");
+      selector.innerHTML = '<option value="">-- Choose Linked Channel --</option>';
+      listContainer.innerHTML = '';
+
+      list.forEach(ch => {
+        // Dropdown populate
+        const opt = document.createElement('option');
+        opt.value = ch.channel_username;
+        opt.innerText = ch.channel_username;
+        selector.appendChild(opt);
+
+        // List populate
+        const item = document.createElement('div');
+        item.className = 'chan-item';
+        item.innerHTML = `
+          <span><b>📢 ${ch.channel_username}</b></span>
+          <button class="chan-del" onclick="deleteChannel('${ch.channel_username}')">✕ Remove</button>
+        `;
+        listContainer.appendChild(item);
+      });
+    }
+
+    // Add Channel (Max 2 Check)
+    async function addChannel() {
+      const input = document.getElementById('new-channel-input');
+      const val = input.value.trim();
+      if (!val.startsWith('@')) {
+        alert("Channel username must start with @ (e.g. @MyChannel)");
         return;
       }
-
-      if (!text && !photo) {
-        alert("Please write some post text or enter a photo URL.");
-        return;
-      }
-
-      if (!buttonLabel || !buttonUrl) {
-        alert("Please fill in both Button Name and Destination URL.");
-        return;
-      }
-
-      const btn = document.getElementById('dispatch-btn');
-      btn.disabled = true;
-      btn.innerText = "Dispatching...";
-      tg?.MainButton?.showProgress?.();
 
       try {
-        const payload = {
-          initData: tg?.initData || '',
-          target,
-          text,
-          photo: photo || null,
-          buttons: [[{ text: buttonLabel, url: buttonUrl }]],
-          autoPin,
-          autoDeleteHours: deleteOptions[deleteIdx]
-        };
-
-        const res = await fetch(`${BACKEND_URL}/api/publish`, {
+        const res = await fetch(`${BACKEND}/api/channel/add`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ initData: tg?.initData || '', channel: val })
         });
+        const data = await res.json();
+        if (data.ok) {
+          input.value = '';
+          alert("Channel linked successfully!");
+          loadChannels();
+        } else {
+          alert(`❌ ${data.error}`);
+        }
+      } catch (_) {
+        alert("Failed to connect. Check internet.");
+      }
+    }
 
+    async function deleteChannel(username) {
+      if (!confirm(`Remove ${username}?`)) return;
+      try {
+        await fetch(`${BACKEND}/api/channel/delete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ initData: tg?.initData || '', channel: username })
+        });
+        loadChannels();
+      } catch (_) {}
+    }
+
+    // Publish Post (Rate Limited to 3/min)
+    async function publishPost() {
+      const selChan = document.getElementById('channel-selector').value;
+      const manualChan = document.getElementById('target-chat-manual').value.trim();
+      const target = selChan || manualChan;
+      const text = pText.value.trim();
+      const btnName = bLabel.value.trim();
+      const btnLink = document.getElementById('btn-url').value.trim();
+
+      if (!target || !target.startsWith('@')) {
+        alert("Please pick or type a valid @Channel username.");
+        return;
+      }
+      if (!text && !selectedFile) {
+        alert("Please enter text or attach an Image/PDF.");
+        return;
+      }
+      if (!btnName || !btnLink) {
+        alert("Please provide both Custom Button Name and Link.");
+        return;
+      }
+
+      const btn = document.getElementById('publish-btn');
+      btn.disabled = true;
+      btn.innerText = "Dispatching...";
+
+      const formData = new FormData();
+      formData.append('initData', tg?.initData || '');
+      formData.append('target', target);
+      formData.append('text', text);
+      formData.append('buttonLabel', btnName);
+      formData.append('buttonUrl', btnLink);
+      if (selectedFile) {
+        formData.append('file', selectedFile);
+      }
+
+      try {
+        const res = await fetch(`${BACKEND}/api/publish`, {
+          method: 'POST',
+          body: formData
+        });
         const data = await res.json();
 
         if (data.ok) {
           tg?.HapticFeedback?.notificationOccurred('success');
-          alert(`🎉 Post dispatched successfully to ${target}!`);
-          tg?.close();
+          alert(`🎉 Post successfully delivered to ${target}!`);
+          // Clear inputs but keep setup clean
+          pText.value = '';
+          bLabel.value = '';
+          document.getElementById('post-file').value = '';
+          selectedFile = null;
+          handleFileSelect({ target: { files: [] } });
         } else {
           tg?.HapticFeedback?.notificationOccurred('error');
-          alert(`❌ Failed: ${data.error || 'Check bot admin permissions.'}`);
+          alert(`❌ ${data.error || 'Failed to dispatch post'}`);
         }
       } catch (err) {
         alert("Network error. Please try again.");
       } finally {
         btn.disabled = false;
-        btn.innerText = "🚀 Post to Channel";
+        btn.innerText = "🚀 Dispatch to Channel";
       }
     }
+
+    // Auto-load channels on start
+    loadChannels();
   </script>
 </body>
 </html>
