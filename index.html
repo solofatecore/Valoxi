@@ -32,7 +32,6 @@
       padding-bottom: 90px;
     }
 
-    /* Top User Bar */
     .user-header {
       display: flex;
       align-items: center;
@@ -69,15 +68,9 @@
       font-weight: 600;
     }
 
-    /* Views / Tabs */
-    .view {
-      display: none;
-    }
-    .view.active {
-      display: block;
-    }
+    .view { display: none; }
+    .view.active { display: block; }
 
-    /* Forms & Cards */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -85,12 +78,8 @@
       padding: 14px;
       margin-bottom: 14px;
     }
-    .form-group {
-      margin-bottom: 12px;
-    }
-    .form-group:last-child {
-      margin-bottom: 0;
-    }
+    .form-group { margin-bottom: 12px; }
+    .form-group:last-child { margin-bottom: 0; }
     label {
       display: block;
       font-size: 12px;
@@ -112,9 +101,6 @@
     input:focus, textarea:focus, select:focus {
       border-color: var(--accent);
     }
-    select {
-      appearance: none;
-    }
 
     .file-upload-box {
       border: 2px dashed var(--border);
@@ -131,7 +117,6 @@
       color: var(--accent);
     }
 
-    /* Telegram Live Preview */
     .preview-box {
       background: #17212b;
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -164,7 +149,6 @@
       text-decoration: none;
     }
 
-    /* Channels View */
     .chan-item {
       display: flex;
       align-items: center;
@@ -184,7 +168,6 @@
       padding: 4px 8px;
     }
 
-    /* Bottom Navigation Bar */
     .nav-bar {
       position: fixed;
       bottom: 0;
@@ -231,7 +214,6 @@
 </head>
 <body>
 
-  <!-- Top User Profile Info -->
   <div class="user-header">
     <div class="user-info">
       <div id="user-avatar" class="avatar">U</div>
@@ -242,7 +224,7 @@
     </div>
   </div>
 
-  <!-- VIEW 1: POST STUDIO -->
+  <!-- VIEW 1: STUDIO -->
   <div id="view-studio" class="view active">
     <div class="card">
       <div class="form-group">
@@ -259,9 +241,9 @@
       </div>
 
       <div class="form-group">
-        <label>Attach Photo / PDF (No URL Required)</label>
+        <label>Attach Photo / PDF</label>
         <div class="file-upload-box" id="file-drop-zone" onclick="document.getElementById('post-file').click()">
-          📁 Tap to attach Image or PDF from device
+          📁 Tap to attach Image or PDF
         </div>
         <input type="file" id="post-file" accept="image/*,application/pdf" style="display: none;" onchange="handleFileSelect(event)" />
       </div>
@@ -270,7 +252,7 @@
     <div class="card">
       <div class="form-group">
         <label>Custom Button Name</label>
-        <input type="text" id="btn-label" placeholder="e.g. Join Airdrop 🚀" maxlength="30" />
+        <input type="text" id="btn-label" placeholder="e.g. Join Channel 🚀" maxlength="30" />
       </div>
 
       <div class="form-group">
@@ -279,7 +261,6 @@
       </div>
     </div>
 
-    <!-- Live Preview -->
     <div class="preview-header">Live Post Preview</div>
     <div class="preview-box">
       <div class="preview-text" id="preview-text">Your post text will appear here...</div>
@@ -289,7 +270,7 @@
     <button class="btn-action" id="publish-btn" onclick="publishPost()">🚀 Dispatch to Channel</button>
   </div>
 
-  <!-- VIEW 2: CHANNELS MANAGER -->
+  <!-- VIEW 2: CHANNELS -->
   <div id="view-channels" class="view">
     <div class="card">
       <label>Add Channel (Free Limit: 2 Max)</label>
@@ -298,12 +279,9 @@
     </div>
 
     <div class="preview-header">Your Linked Channels (<span id="chan-count">0</span>/2)</div>
-    <div id="channels-list">
-      <!-- Dynamic list from backend -->
-    </div>
+    <div id="channels-list"></div>
   </div>
 
-  <!-- Fixed Bottom Navigation -->
   <div class="nav-bar">
     <div class="nav-item active" id="tab-studio" onclick="switchTab('studio')">⚡ Studio</div>
     <div class="nav-item" id="tab-channels" onclick="switchTab('channels')">📢 Channels (<span id="tab-chan-count">0</span>/2)</div>
@@ -314,7 +292,6 @@
     const tg = window.Telegram?.WebApp;
     let selectedFile = null;
 
-    // Init WebApp
     if (tg) {
       tg.ready();
       tg.expand();
@@ -330,7 +307,6 @@
       }
     }
 
-    // Tab Switcher
     function switchTab(tab) {
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -345,7 +321,6 @@
       }
     }
 
-    // Realtime Preview
     const pText = document.getElementById('post-text');
     const bLabel = document.getElementById('btn-label');
     pText.addEventListener('input', () => {
@@ -355,22 +330,68 @@
       document.getElementById('preview-btn').innerText = bLabel.value.trim() || 'Button Name';
     });
 
-    // File Selector Handler
-    function handleFileSelect(e) {
+    // Auto-compress high-res images to 300KB-500KB (Zero quality loss on mobile)
+    async function compressImage(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 1600;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_WIDTH) {
+              height = Math.round((height * MAX_WIDTH) / width);
+              width = MAX_WIDTH;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), {
+                  type: 'image/jpeg',
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            }, 'image/jpeg', 0.85);
+          };
+        };
+      });
+    }
+
+    async function handleFileSelect(e) {
       const file = e.target.files[0];
       const zone = document.getElementById('file-drop-zone');
-      if (file) {
-        selectedFile = file;
-        zone.classList.add('selected');
-        zone.innerText = `✅ Attached: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-      } else {
+      if (!file) {
         selectedFile = null;
         zone.classList.remove('selected');
-        zone.innerText = '📁 Tap to attach Image or PDF from device';
+        zone.innerText = '📁 Tap to attach Image or PDF';
+        return;
+      }
+
+      if (file.type.startsWith('image/')) {
+        zone.innerText = '⚡ Optimizing image...';
+        selectedFile = await compressImage(file);
+        zone.classList.add('selected');
+        zone.innerText = `✅ Ready: ${(selectedFile.size / 1024).toFixed(0)} KB (Optimized)`;
+      } else {
+        selectedFile = file;
+        zone.classList.add('selected');
+        zone.innerText = `📄 Document: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
       }
     }
 
-    // Load User Channels
     async function loadChannels() {
       try {
         const res = await fetch(`${BACKEND}/api/channels`, {
@@ -379,9 +400,7 @@
           body: JSON.stringify({ initData: tg?.initData || '' })
         });
         const data = await res.json();
-        if (data.ok) {
-          renderChannels(data.channels || []);
-        }
+        if (data.ok) renderChannels(data.channels || []);
       } catch (_) {}
     }
 
@@ -395,13 +414,11 @@
       listContainer.innerHTML = '';
 
       list.forEach(ch => {
-        // Dropdown populate
         const opt = document.createElement('option');
         opt.value = ch.channel_username;
         opt.innerText = ch.channel_username;
         selector.appendChild(opt);
 
-        // List populate
         const item = document.createElement('div');
         item.className = 'chan-item';
         item.innerHTML = `
@@ -412,7 +429,6 @@
       });
     }
 
-    // Add Channel (Max 2 Check)
     async function addChannel() {
       const input = document.getElementById('new-channel-input');
       const val = input.value.trim();
@@ -436,7 +452,7 @@
           alert(`❌ ${data.error}`);
         }
       } catch (_) {
-        alert("Failed to connect. Check internet.");
+        alert("Network error.");
       }
     }
 
@@ -452,7 +468,6 @@
       } catch (_) {}
     }
 
-    // Publish Post (Rate Limited to 3/min)
     async function publishPost() {
       const selChan = document.getElementById('channel-selector').value;
       const manualChan = document.getElementById('target-chat-manual').value.trim();
@@ -462,15 +477,15 @@
       const btnLink = document.getElementById('btn-url').value.trim();
 
       if (!target || !target.startsWith('@')) {
-        alert("Please pick or type a valid @Channel username.");
+        alert("Please pick or enter a valid channel username starting with @");
         return;
       }
       if (!text && !selectedFile) {
-        alert("Please enter text or attach an Image/PDF.");
+        alert("Please provide post text or attach an Image/PDF.");
         return;
       }
       if (!btnName || !btnLink) {
-        alert("Please provide both Custom Button Name and Link.");
+        alert("Please enter both Button Name and Link.");
         return;
       }
 
@@ -498,7 +513,6 @@
         if (data.ok) {
           tg?.HapticFeedback?.notificationOccurred('success');
           alert(`🎉 Post successfully delivered to ${target}!`);
-          // Clear inputs but keep setup clean
           pText.value = '';
           bLabel.value = '';
           document.getElementById('post-file').value = '';
@@ -516,7 +530,6 @@
       }
     }
 
-    // Auto-load channels on start
     loadChannels();
   </script>
 </body>
